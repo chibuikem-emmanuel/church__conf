@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    form p {
+        margin-bottom: 1.5rem;
+    }
+    form label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #334155; /* slate-700 */
+        margin-bottom: 0.5rem;
+        margin-left: 0.25rem;
+    }
+    form input, form select, form textarea {
+        width: 100%;
+        background-color: #f8fafc; /* slate-50 */
+        border: 2px solid #e2e8f0; /* slate-200 */
+        border-radius: 1rem;
+        padding: 0.75rem 1rem;
+        color: #0f172a; /* slate-900 */
+        transition: all 0.2s;
+        outline: none;
+    }
+    form input:focus, form textarea:focus {
+        background-color: #ffffff;
+        border-color: #4f46e5; /* indigo-600 */
+        box-shadow: 0 0 0 4px #eef2ff; /* indigo-50 */
+    }
+    form .helptext {
+        display: block;
+        font-size: 0.75rem;
+        color: #64748b; /* slate-500 */
+        margin-top: 0.25rem;
+        margin-left: 0.25rem;
+    }
+</style>
+
+<div class="max-w-2xl mx-auto py-6">
+    
+    <a href="/dashboard/" class="inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-indigo-600 transition mb-6">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Dashboard
+    </a>
+
+    <div class="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
+        
+        <div class="mb-10">
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Setup New Conference</h2>
+            <p class="text-slate-500 mt-2 font-medium">Enter your event details to generate your unique registration QR code.</p>
+        </div>
+
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="bg-slate-50/50 p-6 rounded-3xl border border-slate-100/50">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-6">Event Details</h3>
+                
+                {{ form.as_p }}
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" 
+                    class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-lg hover:bg-indigo-600 transition transform active:scale-[0.98] shadow-xl shadow-slate-200 flex items-center justify-center gap-2 group">
+                    <span>Create & Generate QR Code</span>
+                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </button>
+                
+                <p class="text-center text-xs text-slate-400 mt-6 font-medium leading-relaxed">
+                    Once created, you can access your attendee list and download the registration QR code for your entrance door.
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

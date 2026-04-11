@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Confy | Church Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        /* Style the default Django form paragraphs to look professional */
+        form p {
+            margin-bottom: 1.25rem;
+        }
+        form label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #334155; /* slate-700 */
+            margin-bottom: 0.5rem;
+            margin-left: 0.25rem;
+        }
+        form input, form select, form textarea {
+            width: 100%;
+            background-color: #f8fafc; /* slate-50 */
+            border: 2px solid #e2e8f0; /* slate-200 */
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            color: #0f172a; /* slate-900 */
+            transition: all 0.2s;
+            outline: none;
+        }
+        form input:focus {
+            background-color: #ffffff;
+            border-color: #4f46e5; /* indigo-600 */
+            box-shadow: 0 0 0 4px #eef2ff; /* indigo-50 */
+        }
+        form .helptext {
+            display: block;
+            font-size: 0.75rem;
+            color: #64748b; /* slate-500 */
+            margin-top: 0.25rem;
+            margin-left: 0.25rem;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 flex flex-col justify-center items-center min-h-screen p-6 antialiased">
+
+    <div class="fixed top-0 w-full p-8 flex justify-between items-center pointer-events-none">
+        <a href="/" class="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition pointer-events-auto">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Home
+        </a>
+    </div>
+
+    <div class="w-full max-w-xl py-12">
+        <div class="text-center mb-8">
+            <div class="inline-flex w-14 h-14 bg-indigo-600 rounded-2xl items-center justify-center text-white font-extrabold text-2xl mb-4 shadow-xl shadow-indigo-200">
+                C
+            </div>
+            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Create Your Account</h2>
+            <p class="text-slate-500 mt-2 font-medium">Empower your church with smart conference tools.</p>
+        </div>
+
+        <div class="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100">
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="space-y-2">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-4">Account Information</h3>
+                    {{ user_form.as_p }}
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-slate-100 space-y-2">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-4">Church Details</h3>
+                    {{ church_form.as_p }}
+                </div>
+
+                <p class="text-xs text-slate-400 mt-6 leading-relaxed">
+                    By clicking Register, you agree to our terms of service and acknowledge that your data will be managed securely under our privacy policy.
+                </p>
+
+                <button type="submit" 
+                    class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-lg hover:bg-indigo-600 transition transform active:scale-[0.98] shadow-lg shadow-slate-200 mt-8">
+                    Create Account
+                </button>
+            </form>
+
+            <div class="mt-8 text-center">
+                <p class="text-sm text-slate-500 font-medium">
+                    Already registered? <a href="/login/" class="text-indigo-600 font-bold hover:underline">Sign in instead</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-10 flex items-center justify-center gap-6 opacity-40 grayscale">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-tighter">Trusted by Church Ministries</span>
+        </div>
+    </div>
+
+</body>
+</html>
