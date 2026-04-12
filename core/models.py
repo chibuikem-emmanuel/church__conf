@@ -13,7 +13,7 @@ class Conference(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        url = f"http://127.0.0.1:8000/event/{self.id}/"
+        url = f"https://the-confy.onrender.com/event/{self.id}/"
         qr = qrcode.make(url)
 
         buffer = BytesIO()
