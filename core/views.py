@@ -156,7 +156,7 @@ def home(request):
 
 
 def generate_qr(request, pk):
-    url = f"https://your-app-name.onrender.com/event/{pk}/"
+    url = f"https://the-confy.onrender.com/event/{pk}/"
 
     qr = qrcode.make(url)
     buffer = BytesIO()
