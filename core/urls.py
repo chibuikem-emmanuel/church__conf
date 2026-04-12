@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import delete_conference, delete_attendee
+from .views import delete_conference, delete_attendee, generate_qr
 
 urlpatterns = [
     path('', views.home, name='home'), 
@@ -15,4 +15,6 @@ urlpatterns = [
 
     path('delete-conference/<int:pk>/', delete_conference),
     path('delete-attendee/<int:pk>/', delete_attendee),
+
+    path('qr/<int:pk>/', generate_qr),
 ]

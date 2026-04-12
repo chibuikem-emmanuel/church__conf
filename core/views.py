@@ -7,6 +7,8 @@ from .forms import ConferenceForm, AttendeeForm
 from django.core.mail import send_mail
 from django.http import HttpResponse
 import openpyxl
+import qrcode
+from io import BytesIO
 
 
 def user_login(request):
@@ -150,3 +152,14 @@ def user_logout(request):
 
 def home(request):
     return render(request, 'home.html')
+
+
+
+def generate_qr(request, pk):
+    url = f"https://your-app-name.onrender.com/event/{pk}/"
+
+    qr = qrcode.make(url)
+    buffer = BytesIO()
+    qr.save(buffer, format='PNG')
+
+    return HttpResponse(buffer.getvalue(), content_type="image/png")

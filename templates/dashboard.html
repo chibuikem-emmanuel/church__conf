@@ -62,9 +62,9 @@
                 </p>
 
                 {% if conf.qr_code %}
-                <div onclick="openQR('{{ conf.qr_code.url }}')" 
+                <div onclick="openQR('/qr/{{ conf.id }}/')" 
                      class="bg-slate-50 rounded-2xl p-4 flex flex-col items-center border border-slate-100 group-hover:bg-indigo-50/50 cursor-pointer transition-all hover:border-indigo-200">
-                    <img src="{{ conf.qr_code.url }}" class="w-24 h-24 mix-blend-multiply opacity-80 group-hover:opacity-100 transition" alt="Check-in QR">
+                    <img src="/qr/{{ conf.id }}/" class="w-24 h-24 mix-blend-multiply opacity-80 group-hover:opacity-100 transition" alt="Check-in QR">
                     <span class="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter group-hover:text-indigo-600 transition">Click to Enlarge</span>
                 </div>
                 {% endif %}
