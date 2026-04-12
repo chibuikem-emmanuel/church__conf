@@ -6,7 +6,7 @@ from .models import Conference, Attendee, EmailTemplate
 from .forms import ConferenceForm, AttendeeForm
 from django.core.mail import send_mail
 from django.http import HttpResponse
-import openpyxl
+from openpyxl import Workbook
 import qrcode
 from io import BytesIO
 
@@ -24,8 +24,10 @@ def user_login(request):
 
 
 def user_logout(request):
-    logout(request)
+    if request.method == "POST":
+        logout(request)
     return redirect('login')
+
 
 
 @login_required
@@ -80,13 +82,21 @@ def event_page(request, pk):
 
 @login_required
 def attendee_list(request, pk):
-    attendees = Attendee.objects.filter(conference_id=pk)
-    templates = EmailTemplate.objects.filter(church=request.user.church)
+    conference = Conference.objects.get(id=pk)
+    query = request.GET.get('q')
+
+    attendees = Attendee.objects.filter(conference=conference)
+
+    if query:
+        attendees = attendees.filter(
+            Q(name__icontains=query) |
+            Q(email__icontains=query) |
+            Q(phone__icontains=query)
+        )
 
     return render(request, 'attendee_list.html', {
         'attendees': attendees,
-        'conference_id': pk,
-        'templates': templates
+        'conference': conference
     })
 
 
@@ -126,29 +136,35 @@ def send_bulk_email(request, pk, template_id):
 
 
 @login_required
-def export_excel(request, pk):
-    attendees = Attendee.objects.filter(conference_id=pk)
+def export_attendees(request, pk):
+    conference = Conference.objects.get(id=pk)
+    attendees = Attendee.objects.filter(conference=conference)
 
-    wb = openpyxl.Workbook()
+    wb = Workbook()
     ws = wb.active
+    ws.title = "Attendees"
+
+    # Header
     ws.append(['Name', 'Email', 'Phone', 'Expectation'])
 
+    # Data
     for a in attendees:
         ws.append([a.name, a.email, a.phone, a.expectation])
 
+    # Response
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    response['Content-Disposition'] = 'attachment; filename=attendees.xlsx'
+
+    response['Content-Disposition'] = f'attachment; filename="{conference.title}.xlsx"'
 
     wb.save(response)
+
     return response
 
 
 
-def user_logout(request):
-    logout(request)
-    return redirect('login')
+
 
 def home(request):
     return render(request, 'home.html')

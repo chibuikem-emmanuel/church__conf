@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import delete_conference, delete_attendee, generate_qr
+from .views import delete_conference, delete_attendee, export_attendees, generate_qr
 
 urlpatterns = [
     path('', views.home, name='home'), 
@@ -9,7 +9,7 @@ urlpatterns = [
     path('event/<int:pk>/', views.event_page),
     path('attendees/<int:pk>/', views.attendee_list, name='attendee_list'),
     path('send-email/<int:pk>/<int:template_id>/', views.send_bulk_email),
-    path('export/<int:pk>/', views.export_excel),
+    path('export/<int:pk>/', export_attendees, name='export_attendees'),
     path('logout/', views.user_logout, name='logout'),
     path('login/', views.user_login, name='login'), 
 

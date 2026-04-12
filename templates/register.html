@@ -64,6 +64,19 @@
             <p class="text-slate-500 mt-2 font-medium">Empower your church with smart conference tools.</p>
         </div>
 
+
+        {% if success %}
+            <div class="bg-green-100 text-green-700 p-3 rounded mb-4 text-center">
+                Registered Successfully ✅
+            </div>
+        {% endif %}
+
+        {% if error %}
+            <div class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
+                {{ error }}
+            </div>
+        {% endif %}
+
         <div class="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100">
             <form method="POST">
                 {% csrf_token %}
@@ -100,5 +113,16 @@
         </div>
     </div>
 
+
+
+
+
+
+<script>
+setTimeout(() => {
+    let alert = document.querySelector('.bg-green-100');
+    if(alert) alert.style.display = 'none';
+}, 3000);
+</script>
 </body>
 </html>
