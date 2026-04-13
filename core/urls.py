@@ -17,5 +17,5 @@ urlpatterns = [
     path('delete-attendee/<int:pk>/', delete_attendee),
 
     path('qr/<int:pk>/', generate_qr),
-    path('conference/<int:conf_id>/broadcast/', views.broadcast_email_view, name='broadcast_email'),
+    path('conference/<int:conf_id>/broadcast/', views.send_conference_broadcast, name='broadcast_email'),
 ]

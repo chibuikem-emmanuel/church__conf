@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from openpyxl import Workbook
 import qrcode
 from io import BytesIO
+from django.db.models import Q
 
 
 def user_login(request):
