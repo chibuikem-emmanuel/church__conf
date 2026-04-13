@@ -200,6 +200,7 @@ def send_conference_broadcast(request, conf_id):
                 from_email=None, # Uses DEFAULT_FROM_EMAIL
                 to=[request.user.email], # Sends the main copy to the Admin
                 bcc=emails, # Sends a blind copy to all attendees
+                reply_to=['support@the-confy.onrender.com'],
             )
             email.send()
             
