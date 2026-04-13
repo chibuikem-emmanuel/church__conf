@@ -191,49 +191,56 @@ def generate_qr(request, pk):
 
 
 def send_conference_broadcast(request, conf_id):
+    """
+    Handles sending bulk emails to all attendees of a specific conference.
+    """
     conference = get_object_or_404(Conference, id=conf_id)
-    # Using attendee_set as the default reverse relationship
+    
+    # We use attendee_set because the ForeignKey in Attendee points to Conference
     attendees = conference.attendee_set.all()
 
     if request.method == "POST":
         subject = request.POST.get('subject')
         message_body = request.POST.get('message')
         
-        # Get list of all emails for this conference
+        # Extract all email addresses into a flat list
         email_list = list(attendees.values_list('email', flat=True))
         
         if not email_list:
             messages.warning(request, "There are no attendees registered for this conference.")
             return redirect('attendee_list', conf_id=conf_id)
 
-        # Create the email object
+        # Build the email
         email = EmailMessage(
             subject=f"[{conference.title}] {subject}",
             body=message_body,
-            from_email=None,  # Uses DEFAULT_FROM_EMAIL from settings
-            to=[request.user.email],  # Sends a copy to the admin
-            bcc=email_list,           # Hides recipient list from each other
+            from_email=None,           # Uses DEFAULT_FROM_EMAIL from settings.py
+            to=[request.user.email],   # Admin gets a copy
+            bcc=email_list,            # Recipients are hidden from each other
         )
 
         try:
+            # We use fail_silently=False so the 'except' block can catch errors
             email.send(fail_silently=False)
-            messages.success(request, f"Broadcast successfully sent!")
+            messages.success(request, "Broadcast successfully sent!")
             return redirect('attendee_list', conf_id=conf_id)
         
         except Exception as err:
-            # We use 'err' instead of 'e' to avoid any local variable confusion
-            # And we ensure 'messages' refers to django.contrib.messages
+            # Using 'err' here to avoid any confusion with 'e'
             messages.error(request, f"Mail Error: {str(err)}")
             
-            return render(request, 'compose_email.html', {
+            # If it fails, we return the user to the form with their text preserved
+            context = {
                 'conference': conference,
                 'attendees': attendees,
                 'subject': subject,
                 'message': message_body
-            })
+            }
+            return render(request, 'compose_email.html', context)
 
-    # This handles the GET request to load the page initially
-    return render(request, 'compose_email.html', {
+    # This handles the initial GET request to load the page
+    context = {
         'conference': conference,
         'attendees': attendees
-    })
+    }
+    return render(request, 'compose_email.html', context)
