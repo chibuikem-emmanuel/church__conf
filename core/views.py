@@ -209,27 +209,30 @@ def send_conference_broadcast(request, conf_id):
         email = EmailMessage(
             subject=f"[{conference.title}] {subject}",
             body=message_body,
-            from_email=None,
-            to=[request.user.email],
+            from_email='Confy <chizaramchibuikem@gmail.com>',
+            to=['chizaramchibuikem@gmail.com'], # Sends a copy to you
             bcc=email_list,
         )
 
         try:
+            # fail_silently=False ensures we catch the error
             email.send(fail_silently=False)
-            messages.success(request, "Broadcast sent!")
+            messages.success(request, "Broadcast successfully sent!")
             return redirect('attendee_list', conf_id=conf_id)
         
-        except Exception as err:
-            # Using the api directly fixes the 'dict' attribute error
-            messages_api.error(request, f"Mail Connection Timeout: {str(err)}")
+        except Exception as e:
+            # THIS IS KEY: Check your Render Logs for "MAIL ERROR >>>"
+            print(f"MAIL ERROR >>> {str(e)}") 
+            messages.error(request, f"Mail Error: {str(e)}")
             
-            # Use 'context' as the name to avoid shadowing 'messages'
-            context = {
+            return render(request, 'compose_email.html', {
                 'conference': conference,
                 'attendees': attendees,
                 'subject': subject,
                 'message': message_body
-            }
-            return render(request, 'compose_email.html', context)
+            })
 
-    return render(request, 'compose_email.html', {'conference': conference, 'attendees': attendees})
+    return render(request, 'compose_email.html', {
+        'conference': conference, 
+        'attendees': attendees
+    })
