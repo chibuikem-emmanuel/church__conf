@@ -1,5 +1,6 @@
 from pyexpat.errors import messages
-
+from django.contrib.messages import api as messages_api 
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -190,46 +191,39 @@ def generate_qr(request, pk):
 
 
 
+
+
 def send_conference_broadcast(request, conf_id):
-    """
-    Handles sending bulk emails to all attendees of a specific conference.
-    """
     conference = get_object_or_404(Conference, id=conf_id)
-    
-    # We use attendee_set because the ForeignKey in Attendee points to Conference
     attendees = conference.attendee_set.all()
 
     if request.method == "POST":
         subject = request.POST.get('subject')
         message_body = request.POST.get('message')
-        
-        # Extract all email addresses into a flat list
         email_list = list(attendees.values_list('email', flat=True))
         
         if not email_list:
-            messages.warning(request, "There are no attendees registered for this conference.")
+            messages.warning(request, "No attendees registered.")
             return redirect('attendee_list', conf_id=conf_id)
 
-        # Build the email
         email = EmailMessage(
             subject=f"[{conference.title}] {subject}",
             body=message_body,
-            from_email=None,           # Uses DEFAULT_FROM_EMAIL from settings.py
-            to=[request.user.email],   # Admin gets a copy
-            bcc=email_list,            # Recipients are hidden from each other
+            from_email=None,
+            to=[request.user.email],
+            bcc=email_list,
         )
 
         try:
-            # We use fail_silently=False so the 'except' block can catch errors
             email.send(fail_silently=False)
-            messages.success(request, "Broadcast successfully sent!")
+            messages.success(request, "Broadcast sent!")
             return redirect('attendee_list', conf_id=conf_id)
         
         except Exception as err:
-            # Using 'err' here to avoid any confusion with 'e'
-            messages.error(request, f"Mail Error: {str(err)}")
+            # Using the api directly fixes the 'dict' attribute error
+            messages_api.error(request, f"Mail Connection Timeout: {str(err)}")
             
-            # If it fails, we return the user to the form with their text preserved
+            # Use 'context' as the name to avoid shadowing 'messages'
             context = {
                 'conference': conference,
                 'attendees': attendees,
@@ -238,9 +232,4 @@ def send_conference_broadcast(request, conf_id):
             }
             return render(request, 'compose_email.html', context)
 
-    # This handles the initial GET request to load the page
-    context = {
-        'conference': conference,
-        'attendees': attendees
-    }
-    return render(request, 'compose_email.html', context)
+    return render(request, 'compose_email.html', {'conference': conference, 'attendees': attendees})
