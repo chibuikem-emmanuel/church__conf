@@ -216,15 +216,15 @@ def send_conference_broadcast(request, conf_id):
         )
 
         try:
-            # fail_silently=False allows our 'except' block to catch the error
             email.send(fail_silently=False)
-            messages.success(request, f"Broadcast successfully sent to {len(email_list)} attendees!")
+            messages.success(request, f"Broadcast successfully sent!")
             return redirect('attendee_list', conf_id=conf_id)
         
-        except Exception as e:
-            # This prevents the '500 Internal Server Error' page
-            messages.error(request, f"Connection Error: Could not connect to mail server. {str(e)}")
-            # We stay on the same page so they don't lose their typed message
+        except Exception as err:
+            # We use 'err' instead of 'e' to avoid any local variable confusion
+            # And we ensure 'messages' refers to django.contrib.messages
+            messages.error(request, f"Mail Error: {str(err)}")
+            
             return render(request, 'compose_email.html', {
                 'conference': conference,
                 'attendees': attendees,
