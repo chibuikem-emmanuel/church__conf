@@ -1,3 +1,5 @@
+from pyexpat.errors import messages
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -184,24 +186,37 @@ def generate_qr(request, pk):
 
 
 
+# views.py
+
 def send_conference_broadcast(request, conf_id):
+    conference = get_object_or_404(Conference, id=conf_id)
+    # Using 'attendee_set' if you didn't define a related_name
+    attendees = conference.attendee_set.all() 
+
     if request.method == "POST":
-        conference = Conference.objects.get(id=conf_id)
         subject = request.POST.get('subject')
         message_body = request.POST.get('message')
         
-        # Get all email addresses for this conference
-        emails = list(conference.attendees.values_list('email', flat=True))
-
-        if emails:
+        email_list = list(attendees.values_list('email', flat=True))
+        
+        if email_list:
             email = EmailMessage(
                 subject=f"[{conference.title}] {subject}",
                 body=message_body,
-                from_email=None, # Uses DEFAULT_FROM_EMAIL
-                to=[request.user.email], # Sends the main copy to the Admin
-                bcc=emails, # Sends a blind copy to all attendees
-                reply_to=['support@the-confy.onrender.com'],
+                from_email=None, 
+                to=[request.user.email], 
+                bcc=email_list,
             )
             email.send()
-            
-        return redirect('attendee_list', conf_id=conf_id)
+            messages.success(request, f"Message sent to {len(email_list)} attendees!")
+            return redirect('attendee_list', conf_id=conf_id) # Redirect AFTER sending
+        else:
+            messages.warning(request, "No attendees to message.")
+            return redirect('attendee_list', conf_id=conf_id)
+
+    # CRITICAL: This must be outside the 'if' block 
+    # This handles the GET request to show the page
+    return render(request, 'compose_email.html', {
+        'conference': conference,
+        'attendees': attendees
+    })
