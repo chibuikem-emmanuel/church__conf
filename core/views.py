@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import logout
+from django.core.mail import EmailMessage
 from .models import Conference, Attendee, EmailTemplate
 from .forms import ConferenceForm, AttendeeForm
 from django.core.mail import send_mail
@@ -179,3 +180,26 @@ def generate_qr(request, pk):
     qr.save(buffer, format='PNG')
 
     return HttpResponse(buffer.getvalue(), content_type="image/png")
+
+
+
+def send_conference_broadcast(request, conf_id):
+    if request.method == "POST":
+        conference = Conference.objects.get(id=conf_id)
+        subject = request.POST.get('subject')
+        message_body = request.POST.get('message')
+        
+        # Get all email addresses for this conference
+        emails = list(conference.attendees.values_list('email', flat=True))
+
+        if emails:
+            email = EmailMessage(
+                subject=f"[{conference.title}] {subject}",
+                body=message_body,
+                from_email=None, # Uses DEFAULT_FROM_EMAIL
+                to=[request.user.email], # Sends the main copy to the Admin
+                bcc=emails, # Sends a blind copy to all attendees
+            )
+            email.send()
+            
+        return redirect('attendee_list', conf_id=conf_id)
