@@ -188,34 +188,51 @@ def generate_qr(request, pk):
 
 # views.py
 
+
+
 def send_conference_broadcast(request, conf_id):
     conference = get_object_or_404(Conference, id=conf_id)
-    # Using 'attendee_set' if you didn't define a related_name
-    attendees = conference.attendee_set.all() 
+    # Using attendee_set as the default reverse relationship
+    attendees = conference.attendee_set.all()
 
     if request.method == "POST":
         subject = request.POST.get('subject')
         message_body = request.POST.get('message')
         
+        # Get list of all emails for this conference
         email_list = list(attendees.values_list('email', flat=True))
         
-        if email_list:
-            email = EmailMessage(
-                subject=f"[{conference.title}] {subject}",
-                body=message_body,
-                from_email=None, 
-                to=[request.user.email], 
-                bcc=email_list,
-            )
-            email.send()
-            messages.success(request, f"Message sent to {len(email_list)} attendees!")
-            return redirect('attendee_list', conf_id=conf_id) # Redirect AFTER sending
-        else:
-            messages.warning(request, "No attendees to message.")
+        if not email_list:
+            messages.warning(request, "There are no attendees registered for this conference.")
             return redirect('attendee_list', conf_id=conf_id)
 
-    # CRITICAL: This must be outside the 'if' block 
-    # This handles the GET request to show the page
+        # Create the email object
+        email = EmailMessage(
+            subject=f"[{conference.title}] {subject}",
+            body=message_body,
+            from_email=None,  # Uses DEFAULT_FROM_EMAIL from settings
+            to=[request.user.email],  # Sends a copy to the admin
+            bcc=email_list,           # Hides recipient list from each other
+        )
+
+        try:
+            # fail_silently=False allows our 'except' block to catch the error
+            email.send(fail_silently=False)
+            messages.success(request, f"Broadcast successfully sent to {len(email_list)} attendees!")
+            return redirect('attendee_list', conf_id=conf_id)
+        
+        except Exception as e:
+            # This prevents the '500 Internal Server Error' page
+            messages.error(request, f"Connection Error: Could not connect to mail server. {str(e)}")
+            # We stay on the same page so they don't lose their typed message
+            return render(request, 'compose_email.html', {
+                'conference': conference,
+                'attendees': attendees,
+                'subject': subject,
+                'message': message_body
+            })
+
+    # This handles the GET request to load the page initially
     return render(request, 'compose_email.html', {
         'conference': conference,
         'attendees': attendees
