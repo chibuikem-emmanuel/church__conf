@@ -113,9 +113,9 @@ EMAIL_PORT = 2525
 EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
 EMAIL_TIMEOUT = 30
-EMAIL_HOST_USER = 'chizaramchibuikem@gmail.com'  # The login from Brevo
+EMAIL_HOST_USER = 'a7f23a001@smtp-brevo.com'  # The login from Brevo
 EMAIL_HOST_PASSWORD = os.getenv('BREVO_PASSWORD') # The key you just generated
-DEFAULT_FROM_EMAIL = 'chizaramchibuikem@gmail.com'
+DEFAULT_FROM_EMAIL = 'the-confy <chizaramchibuikem@gmail.com>'
 
 
 # Password validation
