@@ -109,10 +109,10 @@ DATABASES = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp-relay.brevo.com'
-EMAIL_PORT = 587
+EMAIL_PORT = 2525
 EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
-EMAIL_TIMEOUT = 20
+EMAIL_TIMEOUT = 30
 EMAIL_HOST_USER = 'chizaramchibuikem@gmail.com'  # The login from Brevo
 EMAIL_HOST_PASSWORD = os.getenv('BREVO_PASSWORD') # The key you just generated
 DEFAULT_FROM_EMAIL = 'Confy <chizaramchibuikem@gmail.com>'
