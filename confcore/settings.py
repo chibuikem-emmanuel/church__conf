@@ -109,18 +109,24 @@ DATABASES = {
 # settings.py
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp-relay.brevo.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-
-# This line forces the connection to use IPv4 instead of IPv6
-socket.setdefaulttimeout(20)
-
-# Use the credentials from your Brevo dashboard screenshot
-EMAIL_HOST_USER = 'a7f23a001@smtp-brevo.com' 
+# 1. Pull your API Key from Environment Variables
+# In Render, make sure the Key is named BREVO_PASSWORD
+# and contains your 'xkeysib-...' key.
 EMAIL_HOST_PASSWORD = config('BREVO_PASSWORD')
+
+# 2. Default Email address (Must be a Verified Sender in Brevo)
+DEFAULT_FROM_EMAIL = 'Confy <chizaramchibuikem@gmail.com>'
+
+# 3. Message Tags for Tailwind CSS Styling
+# This ensures Django's error/success messages match your UI colors
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.DEBUG: 'bg-slate-500',
+    messages.INFO: 'bg-blue-500',
+    messages.SUCCESS: 'bg-emerald-500',
+    messages.WARNING: 'bg-amber-500',
+    messages.ERROR: 'bg-red-500',
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

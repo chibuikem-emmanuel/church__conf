@@ -8,6 +8,7 @@ urlpatterns = [
     path('create/', views.create_conference),
     path('event/<int:pk>/', views.event_page),
     path('attendees/<int:pk>/', views.attendee_list, name='attendee_list'),
+    path('attendees/<int:conf_id>/', views.attendee_list, name='attendee_list'),
     path('send-email/<int:pk>/<int:template_id>/', views.send_bulk_email),
     path('export/<int:pk>/', export_attendees, name='export_attendees'),
     path('logout/', views.user_logout, name='logout'),
@@ -17,5 +18,6 @@ urlpatterns = [
     path('delete-attendee/<int:pk>/', delete_attendee),
 
     path('qr/<int:pk>/', generate_qr),
+    path('conference/<int:conf_id>/broadcast/', views.send_conference_broadcast, name='send_broadcast'),
     path('conference/<int:conf_id>/broadcast/', views.send_conference_broadcast, name='broadcast_email'),
 ]

@@ -15,6 +15,13 @@ import qrcode
 from io import BytesIO
 from django.db.models import Q
 
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
+from django.conf import settings
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Conference
+
 
 def user_login(request):
     if request.method == "POST":
@@ -193,6 +200,8 @@ def generate_qr(request, pk):
 
 
 
+
+
 def send_conference_broadcast(request, conf_id):
     conference = get_object_or_404(Conference, id=conf_id)
     attendees = conference.attendee_set.all()
@@ -201,29 +210,56 @@ def send_conference_broadcast(request, conf_id):
         subject = request.POST.get('subject')
         message_body = request.POST.get('message')
         email_list = list(attendees.values_list('email', flat=True))
-        
+
         if not email_list:
             messages.warning(request, "No attendees registered.")
             return redirect('attendee_list', conf_id=conf_id)
 
-        email = EmailMessage(
-            subject=f"[{conference.title}] {subject}",
-            body=message_body,
-            from_email='Confy <chizaramchibuikem@gmail.com>',
-            to=['chizaramchibuikem@gmail.com'], # Sends a copy to you
-            bcc=email_list,
+        # 1. Configure the Brevo API Key
+        configuration = sib_api_v3_sdk.Configuration()
+        # This uses the key you saved in your Render Environment Variables
+        configuration.api_key['api-key'] = settings.EMAIL_HOST_PASSWORD 
+
+        api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+
+        # 2. Prepare Email Data
+        # We send it to the admin (you) and BCC the attendees for privacy
+        sender = {"name": "Confy", "email": "chizaramchibuikem@gmail.com"}
+        to = [{"email": "chizaramchibuikem@gmail.com"}]
+        bcc_list = [{"email": email} for email in email_list]
+        
+        # Format the body as HTML
+        html_content = f"""
+        <html>
+            <body style="font-family: sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee;">
+                    <h2 style="color: #4f46e5;">{conference.title}</h2>
+                    <p>{message_body}</p>
+                    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                    <small style="color: #999;">Sent via Confy Management System</small>
+                </div>
+            </body>
+        </html>
+        """
+
+        send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+            to=to,
+            bcc=bcc_list,
+            html_content=html_content,
+            sender=sender,
+            subject=f"[{conference.title}] {subject}"
         )
 
         try:
-            # fail_silently=False ensures we catch the error
-            email.send(fail_silently=False)
-            messages.success(request, "Broadcast successfully sent!")
+            # 3. Send the request
+            api_instance.send_trans_email(send_smtp_email)
+            messages.success(request, f"Broadcast successfully sent via API to {len(email_list)} people!")
             return redirect('attendee_list', conf_id=conf_id)
         
-        except Exception as e:
-            # THIS IS KEY: Check your Render Logs for "MAIL ERROR >>>"
-            print(f"MAIL ERROR >>> {str(e)}") 
-            messages.error(request, f"Mail Error: {str(e)}")
+        except ApiException as e:
+            # Logs the exact error if Brevo rejects the request
+            print(f"BREVO API ERROR: {e}")
+            messages.error(request, f"Mail Error: {e.reason}")
             
             return render(request, 'compose_email.html', {
                 'conference': conference,
