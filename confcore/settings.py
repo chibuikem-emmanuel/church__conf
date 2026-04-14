@@ -15,6 +15,7 @@ from pathlib import Path
 from decouple import config
 import dj_database_url
 from dotenv import load_dotenv
+import socket
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -107,15 +108,19 @@ DATABASES = {
 
 # settings.py
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_PORT = 587
-EMAIL_HOST = 'smtp-brevo.com'
-EMAIL_USE_TLS = True
-EMAIL_TIMEOUT = 30
-EMAIL_HOST_USER = 'a7f23a001@smtp-brevo.com'  # The login from Brevo
-EMAIL_HOST_PASSWORD = os.getenv('BREVO_PASSWORD') # The key you just generated
-DEFAULT_FROM_EMAIL = 'the-confy <chizaramchibuikem@gmail.com>'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-relay.brevo.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+# This line forces the connection to use IPv4 instead of IPv6
+socket.setdefaulttimeout(20)
+
+# Use the credentials from your Brevo dashboard screenshot
+EMAIL_HOST_USER = 'a7f23a001@smtp-brevo.com' 
+EMAIL_HOST_PASSWORD = config('BREVO_PASSWORD')
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
