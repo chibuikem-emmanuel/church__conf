@@ -203,40 +203,52 @@ def generate_qr(request, pk):
 
 
 def send_conference_broadcast(request, conf_id):
+    """
+    Handles sending a broadcast email to all attendees of a specific conference
+    using the Brevo (Sendinblue) API v3.
+    """
     conference = get_object_or_404(Conference, id=conf_id)
     attendees = conference.attendee_set.all()
 
     if request.method == "POST":
         subject = request.POST.get('subject')
         message_body = request.POST.get('message')
+        
+        # Get list of attendee emails
         email_list = list(attendees.values_list('email', flat=True))
 
         if not email_list:
-            messages.warning(request, "No attendees registered.")
+            messages.warning(request, "No attendees registered for this conference.")
             return redirect('attendee_list', conf_id=conf_id)
 
-        # 1. Configure the Brevo API Key
+        # 1. Configure Brevo API Key
         configuration = sib_api_v3_sdk.Configuration()
-        # This uses the key you saved in your Render Environment Variables
+        # Ensure 'BREVO_PASSWORD' in Render contains your xkeysib- API key
         configuration.api_key['api-key'] = settings.EMAIL_HOST_PASSWORD 
 
-        api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+        api_client = sib_api_v3_sdk.ApiClient(configuration)
+        api_instance = sib_api_v3_sdk.TransactionalEmailsApi(api_client)
 
-        # 2. Prepare Email Data
-        # We send it to the admin (you) and BCC the attendees for privacy
+        # 2. Prepare the Email Payload
+        # Sender must be a verified email in your Brevo account
         sender = {"name": "Confy", "email": "chizaramchibuikem@gmail.com"}
+        
+        # We send 'To' the admin and 'BCC' all attendees for privacy
         to = [{"email": "chizaramchibuikem@gmail.com"}]
         bcc_list = [{"email": email} for email in email_list]
         
-        # Format the body as HTML
+        # Wrap message in basic HTML for better delivery
         html_content = f"""
         <html>
-            <body style="font-family: sans-serif; line-height: 1.6; color: #333;">
-                <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee;">
-                    <h2 style="color: #4f46e5;">{conference.title}</h2>
-                    <p>{message_body}</p>
-                    <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-                    <small style="color: #999;">Sent via Confy Management System</small>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                    <h2 style="color: #4f46e5; border-bottom: 2px solid #4f46e5; padding-bottom: 10px;">
+                        {conference.title} - Update
+                    </h2>
+                    <p style="white-space: pre-wrap;">{message_body}</p>
+                    <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee; font-size: 12px; color: #777;">
+                        You are receiving this because you registered for {conference.title}.
+                    </div>
                 </div>
             </body>
         </html>
@@ -251,16 +263,19 @@ def send_conference_broadcast(request, conf_id):
         )
 
         try:
-            # 3. Send the request
-            api_instance.send_trans_email(send_smtp_email)
-            messages.success(request, f"Broadcast successfully sent via API to {len(email_list)} people!")
+            # 3. Execute the Send (Method name: send_transac_email)
+            api_response = api_instance.send_transac_email(send_smtp_email)
+            print(f"BREVO SUCCESS: {api_response}")
+            
+            messages.success(request, f"Broadcast successfully sent to {len(email_list)} attendees!")
             return redirect('attendee_list', conf_id=conf_id)
         
         except ApiException as e:
-            # Logs the exact error if Brevo rejects the request
+            # Logs detailed error if API key is invalid or quota is hit
             print(f"BREVO API ERROR: {e}")
-            messages.error(request, f"Mail Error: {e.reason}")
+            messages.error(request, f"Mail System Error: {e.reason}")
             
+            # Return to form with existing data so user doesn't lose their progress
             return render(request, 'compose_email.html', {
                 'conference': conference,
                 'attendees': attendees,
@@ -268,6 +283,7 @@ def send_conference_broadcast(request, conf_id):
                 'message': message_body
             })
 
+    # GET request: Show the empty form
     return render(request, 'compose_email.html', {
         'conference': conference, 
         'attendees': attendees
