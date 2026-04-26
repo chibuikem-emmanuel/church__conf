@@ -3,69 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Confy</title>
+    <title>Login | Confy Protocol</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/external-tal-revivo-bold-tal-revivo/24/CC0000/external-ticket-for-entertainment-event-and-show-entry-box-bold-tal-revivo.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .input-field { @apply w-full bg-slate-50 border-slate-100 border-2 rounded-2xl p-4 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-[#CC0000] focus:ring-4 focus:ring-red-50 outline-none transition-all duration-300 font-bold text-sm; }
     </style>
 </head>
-<body class="bg-slate-50 flex flex-col justify-center items-center min-h-screen p-6 antialiased">
+<body class="bg-[#FAFAFA] flex flex-col justify-center items-center min-h-screen p-6 antialiased selection:bg-red-100">
 
-    <a href="/" class="absolute top-8 left-8 flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+    <a href="/" class="absolute top-10 left-10 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-[#CC0000] transition-all group">
+        <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        Back to Home
+        Return to HQ
     </a>
 
     <div class="w-full max-w-md">
-        <div class="text-center mb-10">
-            <div class="inline-flex w-14 h-14 bg-indigo-600 rounded-2xl items-center justify-center text-white font-extrabold text-2xl mb-4 shadow-xl shadow-indigo-200 transform -rotate-3">
-                C
+        <div class="text-center mb-12">
+            <div class="inline-flex w-16 h-16 bg-[#CC0000] rounded-[1.25rem] items-center justify-center text-white font-black text-2xl mb-6 shadow-2xl shadow-red-200 transform hover:rotate-6 transition-transform cursor-default">
+                <span class="italic">C</span>
             </div>
-            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Welcome Back</h2>
-            <p class="text-slate-500 mt-2 font-medium tracking-tight">Access your conference management suite</p>
+            <h2 class="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">Authentication</h2>
+            <p class="text-slate-400 mt-4 text-[11px] font-black uppercase tracking-[0.15em]">Access your conference control suite</p>
         </div>
 
-        <form method="POST" class="bg-white p-10 rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100 space-y-6">
+        <form method="POST" class="bg-white p-10 rounded-[3rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.05)] border border-slate-50 space-y-8 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-[#CC0000]"></div>
+            
             {% csrf_token %}
             
-            <div class="space-y-5">
+            <div class="space-y-6">
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2 ml-1">Username</label>
-                    <div class="relative group">
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3 ml-2">System Username</label>
+                    <div class="relative">
                         <input type="text" name="username" required
-                            class="w-full bg-slate-50 border-slate-200 border-2 rounded-2xl p-4 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 outline-none transition-all"
-                            placeholder="Enter your username">
+                            class="input-field"
+                            placeholder="OPERATOR_NAME">
                     </div>
                 </div>
 
                 <div>
-                    <div class="flex justify-between items-center mb-2 ml-1">
-                        <label class="block text-sm font-bold text-slate-700">Password</label>
-                        <a href="#" class="text-xs font-bold text-indigo-600 hover:underline">Forgot?</a>
+                    <div class="flex justify-between items-center mb-3 ml-2">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500">Access Key</label>
+                        <a href="#" class="text-[10px] font-black uppercase tracking-widest text-[#CC0000] hover:text-red-700 transition">Recover?</a>
                     </div>
-                    <div class="relative group">
+                    <div class="relative">
                         <input type="password" name="password" required
-                            class="w-full bg-slate-50 border-slate-200 border-2 rounded-2xl p-4 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 outline-none transition-all"
-                            placeholder="••••••••">
+                            class="input-field"
+                            placeholder="••••••••••••">
                     </div>
                 </div>
             </div>
 
             <button type="submit" 
-                class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-lg hover:bg-indigo-600 transition transform active:scale-[0.98] shadow-lg shadow-slate-200 mt-2">
-                Sign In
+                class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-[#CC0000] transition-all transform active:scale-[0.97] shadow-xl shadow-slate-200 mt-4">
+                Initialize Session
             </button>
 
-            <p class="text-center text-sm text-slate-500 font-medium">
-                New to Confy? <a href="/register/" class="text-indigo-600 font-bold hover:underline">Create an account</a>
+            <p class="text-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                New to the platform? <a href="/register/" class="text-[#CC0000] hover:underline underline-offset-4">Create Account</a>
             </p>
         </form>
 
-        <p class="text-center text-xs text-slate-400 mt-8 font-medium">
-            &copy; 2026 Confy SaaS. Securely managed for your church.
+        <p class="text-center text-[9px] font-black text-slate-300 mt-12 uppercase tracking-[0.3em]">
+            &copy; 2026 Confy Systems. Secured by Enterprise Protocol.
         </p>
     </div>
 
