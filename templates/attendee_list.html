@@ -1,124 +1,144 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="space-y-8">
-    
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-            <div class="flex items-center gap-2 text-sm font-bold text-slate-400 mb-1">
-                <a href="/dashboard/" class="hover:text-indigo-600 transition">Dashboard</a>
-                <span>/</span>
-                <span class="text-indigo-600">Attendees</span>
-            </div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ conference.title }}</h1>
-            <p class="text-slate-500 font-medium">Manage registrations and search attendee records.</p>
-        </div>
-
-        <div class="flex items-center gap-3">
-            <a  href="/export/{{ conference.id }}/"
-               class="inline-flex items-center px-5 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50 transition shadow-sm">
-                <svg class="w-4 h-4 mr-2 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Export Excel
-            </a>
-            <button class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-100 flex items-center">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              {% if messages %}
-                     {% for message in messages %}
-                        <div class="mb-4 p-4 rounded-xl border {% if 'success' in message.tags %}bg-emerald-50 border-emerald-200 text-emerald-800{% else %}bg-red-50 border-red-200 text-red-800{% endif %}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-            {% endif %}
-               <a href="{% url 'send_broadcast' conference.id %}" class="bg-indigo-600 text-white ...">
-                     Broadcast Email
-                </a>
-            </button>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-            <p class="text-sm font-bold text-slate-400 uppercase tracking-wider">Total Attendees</p>
-            <p class="text-3xl font-extrabold text-slate-900 mt-1">{{ attendees|length }}</p>
-        </div>
-        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-            <p class="text-sm font-bold text-slate-400 uppercase tracking-wider">Search Results</p>
-            <p class="text-3xl font-extrabold text-indigo-600 mt-1">{{ attendees|length }}</p>
-        </div>
-        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-            <p class="text-sm font-bold text-slate-400 uppercase tracking-wider">Status</p>
-            <p class="text-3xl font-extrabold text-emerald-600 mt-1">Live</p>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+<div class="min-h-screen bg-stone-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto space-y-8">
         
-        <div class="p-6 border-b border-slate-50 bg-slate-50/30">
-            <form method="GET" class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="relative w-full md:w-96">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </span>
-                    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search name or email..." 
-                        class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-indigo-50 focus:border-indigo-600 outline-none transition">
-                </div>
-                <button type="submit" class="bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-600 transition">
-                    Search
-                </button>
-            </form>
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-8">
+            <div>
+                <nav class="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-3">
+                    <a href="/dashboard/" class="hover:text-[#CC0000] transition">Console</a>
+                    <span class="text-slate-300">/</span>
+                    <span class="text-[#CC0000]">Attendee Intelligence</span>
+                </nav>
+                <h1 class="text-4xl font-black text-slate-900 uppercase tracking-tight">{{ conference.title }}</h1>
+                <p class="text-slate-500 font-medium mt-1">Real-time registration tracking and database management.</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+                <a href="{% url 'send_broadcast' conference.id %}" 
+                   class="inline-flex items-center px-6 py-3 bg-[#CC0000] text-white font-black rounded-xl text-xs uppercase tracking-widest hover:bg-red-700 transition shadow-lg shadow-red-100">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Broadcast Email
+                </a>
+
+                <a href="/export/{{ conference.id }}/"
+                   class="inline-flex items-center px-6 py-3 bg-white border-2 border-slate-100 text-slate-700 font-black rounded-xl text-xs uppercase tracking-widest hover:bg-slate-50 transition">
+                    <svg class="w-4 h-4 mr-2 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export Data
+                </a>
+            </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50/50">
-                        <th class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Attendee</th>
-                        <th class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Contact Info</th>
-                        <th class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-50">
-                    {% for a in attendees %}
-                    <tr class="group hover:bg-indigo-50/30 transition-colors">
-                        <td class="px-8 py-5">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold text-xs">
-                                    {{ a.name|slice:":1" }}
+        {% if messages %}
+            <div class="space-y-3">
+                {% for message in messages %}
+                    {% if "registration" not in message.message|lower %}
+                    <div class="p-4 rounded-2xl border-2 flex items-center gap-3 {% if 'success' in message.tags %}bg-emerald-50 border-emerald-100 text-emerald-800{% else %}bg-red-50 border-red-100 text-[#CC0000]{% endif %}">
+                        <div class="w-2 h-2 rounded-full {% if 'success' in message.tags %}bg-emerald-500{% else %}bg-red-500{% endif %}"></div>
+                        <span class="text-sm font-bold uppercase tracking-tight">{{ message }}</span>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Enrollment</p>
+                <div class="flex items-baseline gap-2">
+                    <p class="text-4xl font-black text-slate-900 mt-1">{{ attendees|length }}</p>
+                    <span class="text-emerald-500 text-xs font-bold font-mono">LIVE</span>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Search Metrics</p>
+                <p class="text-4xl font-black text-[#CC0000] mt-1">{% if request.GET.q %}{{ attendees|length }}{% else %}—{% endif %}</p>
+            </div>
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Capacity Status</p>
+                <p class="text-4xl font-black text-slate-800 mt-1">Active</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/60 overflow-hidden">
+            <div class="p-8 border-b border-slate-50 bg-slate-50/30">
+                <form method="GET" class="flex flex-col md:flex-row md:items-center gap-4">
+                    <div class="relative flex-1">
+                        <span class="absolute inset-y-0 left-5 flex items-center text-slate-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search by name, email, or phone..." 
+                            class="w-full pl-14 pr-6 py-4 bg-white border-2 border-slate-100 rounded-2xl text-sm font-semibold focus:border-[#CC0000] outline-none transition-all shadow-inner">
+                    </div>
+                    <button type="submit" class="bg-slate-900 text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-[#CC0000] transition-all">
+                        Filter Records
+                    </button>
+                </form>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50/50">
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Attendee Profile</th>
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Contact Metadata</th>
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Administrative</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        {% for a in attendees %}
+                        <tr class="group hover:bg-red-50/30 transition-colors">
+                            <td class="px-8 py-6">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-slate-100 text-slate-400 group-hover:bg-[#CC0000] group-hover:text-white rounded-2xl flex items-center justify-center font-black text-sm transition-all transform group-hover:rotate-3">
+                                        {{ a.name|slice:":1"|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="font-black text-slate-800 group-hover:text-[#CC0000] transition text-base">{{ a.name }}</div>
+                                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">ID: #CONF-0{{ a.id }}</div>
+                                    </div>
                                 </div>
-                                <div class="font-bold text-slate-800 group-hover:text-indigo-600 transition">{{ a.name }}</div>
-                            </div>
-                        </td>
-                        <td class="px-8 py-5">
-                            <div class="text-sm font-semibold text-slate-700">{{ a.email }}</div>
-                            <div class="text-xs text-slate-400 mt-0.5">{{ a.phone }}</div>
-                        </td>
-                        <td class="px-8 py-5 text-right">
-                            <div class="flex justify-end items-center gap-3 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                                <form method="POST" action="/delete-attendee/{{ a.id }}/" onsubmit="return confirm('Remove this attendee from the list?');">
+                            </td>
+                            <td class="px-8 py-6">
+                                <div class="text-sm font-bold text-slate-700 mb-1 flex items-center gap-2">
+                                    <svg class="w-3.5 h-3.5 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                                    {{ a.email }}
+                                </div>
+                                <div class="text-xs font-semibold text-slate-400 flex items-center gap-2">
+                                    <svg class="w-3.5 h-3.5 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                                    {{ a.phone }}
+                                </div>
+                            </td>
+                            <td class="px-8 py-6 text-right">
+                                <form method="POST" action="/delete-attendee/{{ a.id }}/" onsubmit="return confirm('WARNING: Permanently remove this record?');" class="inline-block">
                                     {% csrf_token %}
-                                    <button type="submit" class="text-slate-400 hover:text-rose-600 transition" title="Delete Attendee">
+                                    <button type="submit" class="p-3 text-slate-200 hover:text-[#CC0000] hover:bg-red-50 rounded-xl transition-all">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
                                     </button>
                                 </form>
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="3" class="px-8 py-20 text-center">
-                            <p class="text-slate-500 font-bold">No matching attendees found.</p>
-                            <a href="/attendees/{{ conference.id }}/" class="text-indigo-600 text-sm hover:underline mt-2 inline-block">Clear search</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="px-8 py-24 text-center">
+                                <div class="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-10 h-10 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                </div>
+                                <p class="text-slate-400 font-black uppercase tracking-widest text-xs">No Records Found</p>
+                                <a href="/attendees/{{ conference.id }}/" class="text-[#CC0000] text-xs font-black uppercase tracking-widest hover:underline mt-4 inline-block">Reset Filter</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
