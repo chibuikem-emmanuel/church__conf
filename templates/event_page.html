@@ -1,81 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | {{ conference.title }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    </style>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 flex flex-col justify-center items-center min-h-screen p-4 md:p-8 antialiased">
 
-    <div class="absolute top-0 left-0 w-full h-64 bg-indigo-600 -z-10 rounded-b-[3rem] shadow-lg shadow-indigo-100/50"></div>
+<body class="flex justify-center items-center min-h-screen bg-gray-100">
 
-    <div class="w-full max-w-lg">
-        <div class="text-center mb-8 text-white">
-            <div class="inline-flex w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl items-center justify-center text-white font-extrabold text-2xl mb-4 border border-white/30">
-                C
-            </div>
-            <h1 class="text-3xl font-extrabold tracking-tight">{{ conference.title }}</h1>
-            <p class="text-indigo-100 mt-2 font-medium opacity-90">Please fill in your details to join us.</p>
-        </div>
+<form method="POST" class="bg-white p-6 rounded-xl shadow w-96">
+{% csrf_token %}
 
-        <form method="POST" class="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl shadow-slate-900/10 border border-slate-100 space-y-6">
-            {% csrf_token %}
-            
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2 ml-1">Full Name</label>
-                    <input type="text" name="name" required
-                        class="w-full bg-slate-50 border-slate-200 border-2 rounded-2xl p-4 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 outline-none transition-all"
-                        placeholder="e.g. John Doe">
-                </div>
+<h2 class="text-xl font-bold mb-4 text-center">
+{{ conference.title }}
+</h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2 ml-1">Email</label>
-                        <input type="email" name="email" required
-                            class="w-full bg-slate-50 border-slate-200 border-2 rounded-2xl p-4 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 outline-none transition-all"
-                            placeholder="john@example.com">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2 ml-1">Phone</label>
-                        <input type="tel" name="phone" required
-                            class="w-full bg-slate-50 border-slate-200 border-2 rounded-2xl p-4 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 outline-none transition-all"
-                            placeholder="080 000 0000">
-                    </div>
-                </div>
+{% if success %}
+<div class="bg-green-100 text-green-700 p-2 mb-3 text-center">
+{{ success }}
+</div>
+{% endif %}
 
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2 ml-1">What are you expecting?</label>
-                    <textarea name="expectation" rows="3"
-                        class="w-full bg-slate-50 border-slate-200 border-2 rounded-2xl p-4 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 outline-none transition-all resize-none"
-                        placeholder="Tell us what you hope to gain..."></textarea>
-                </div>
-            </div>
+{% if error %}
+<div class="bg-red-100 text-red-700 p-2 mb-3 text-center">
+{{ error }}
+</div>
+{% endif %}
 
-            <button type="submit" 
-                class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-indigo-700 transition transform active:scale-[0.98] shadow-xl shadow-indigo-100 flex items-center justify-center gap-2">
-                Complete Registration
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </button>
+<input name="name" placeholder="Name" class="w-full border p-2 mb-2">
+<input name="email" placeholder="Email" class="w-full border p-2 mb-2">
+<input name="phone" placeholder="Phone" class="w-full border p-2 mb-2">
 
-            <div class="pt-4 text-center">
-                <p class="text-xs text-slate-400 font-medium">
-                    Secured by <strong>Confy</strong>. Your information is only visible to the event organizers.
-                </p>
-            </div>
-        </form>
+<textarea name="expectation" placeholder="Expectation"
+class="w-full border p-2 mb-2"></textarea>
 
-        <p class="text-center text-slate-400 text-xs mt-8 font-medium">
-            &copy; 2026 Confy Management System
-        </p>
-    </div>
+<button class="bg-indigo-600 text-white w-full py-2">
+Register
+</button>
+
+</form>
 
 </body>
 </html>
