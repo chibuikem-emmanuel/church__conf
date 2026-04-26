@@ -76,25 +76,44 @@ def delete_conference(request, pk):
 # ================= EVENT REGISTRATION =================
 
 def event_page(request, pk):
-    conference = get_object_or_404(Conference, pk=pk)
-    form = AttendeeForm(request.POST or None)
+    conference = Conference.objects.get(pk=pk)
 
-    if form.is_valid():
-        attendee = form.save(commit=False)
-        attendee.conference = conference
+    if request.method == "POST":
+        form = AttendeeForm(request.POST)
 
-        # Prevent duplicate registration
-        if Attendee.objects.filter(conference=conference, email=attendee.email).exists():
-            messages.error(request, "You already registered for this conference.")
-        else:
+        if form.is_valid():
+            attendee = form.save(commit=False)
+            attendee.conference = conference
+
+            if Attendee.objects.filter(
+                conference=conference,
+                email=attendee.email
+            ).exists():
+                return render(request, 'event_page.html', {
+                    'form': form,
+                    'conference': conference,
+                    'error': 'You already registered'
+                })
+
             attendee.save()
-            messages.success(request, "Registration successful!")
 
-        return redirect('event_page', pk=pk)
+            # ✅ STORE SUCCESS IN SESSION
+            request.session['registration_success'] = True
+
+            return redirect('event_page', pk=pk)
+
+    else:
+        form = AttendeeForm()
+
+    # ✅ CHECK SUCCESS FLAG
+    success = None
+    if request.session.pop('registration_success', False):
+        success = "Registration successful"
 
     return render(request, 'event_page.html', {
         'form': form,
-        'conference': conference
+        'conference': conference,
+        'success': success
     })
 
 
