@@ -3,130 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confy | Effortless Church Conference Management</title>
+    <title>Confy | Enterprise Event Management for Churches</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/external-tal-revivo-bold-tal-revivo/24/CC0000/external-ticket-for-entertainment-event-and-show-entry-box-bold-tal-revivo.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        #mobile-menu { transition: all 0.3s ease-in-out; }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(241, 245, 249, 1); }
+        .red-gradient-text { background: linear-gradient(to right, #CC0000, #FF3333); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
-<body class="bg-white text-slate-900 antialiased">
+<body class="bg-white text-slate-900 antialiased selection:bg-red-100 selection:text-red-900">
 
-    <nav class="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-100">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-100">
-                    <span class="text-white font-extrabold text-lg italic">C</span>
+    <nav class="glass-nav sticky top-0 z-50 w-full">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-[#CC0000] rounded-2xl flex items-center justify-center shadow-xl shadow-red-100">
+                    <span class="text-white font-black text-xl italic">C</span>
                 </div>
-                <span class="text-xl font-extrabold tracking-tight text-slate-900">Confy</span>
+                <span class="text-2xl font-black tracking-tighter text-slate-900 uppercase">Confy</span>
             </div>
 
-            <div class="hidden md:flex items-center gap-8">
-                <a href="#features" class="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition">Features</a>
-                <a href="/login/" class="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition">Login</a>
-                <a href="/register/" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-600 transition shadow-lg shadow-slate-200">
+            <div class="hidden md:flex items-center gap-10">
+                <a href="#features" class="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-[#CC0000] transition">Features</a>
+                <a href="/login/" class="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-[#CC0000] transition">Login</a>
+                <a href="/register/" class="bg-slate-900 text-white px-7 py-3 rounded-2xl text-xs font-black uppercase tracking-[0.15em] hover:bg-[#CC0000] transition-all shadow-xl shadow-slate-200 transform hover:-translate-y-0.5">
                     Start Free
                 </a>
             </div>
 
-            <button id="menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition">
-                <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            <button id="menu-btn" class="md:hidden p-2 text-slate-900 hover:bg-slate-50 rounded-xl transition">
+                <svg id="menu-icon" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7" />
                 </svg>
             </button>
         </div>
 
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-100 px-6 py-8 space-y-6 absolute w-full left-0 shadow-xl">
-            <a href="#features" class="block text-lg font-bold text-slate-700">Features</a>
-            <a href="/login/" class="block text-lg font-bold text-slate-700">Login</a>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-100 px-6 py-10 space-y-6 absolute w-full left-0 shadow-2xl animate-in fade-in zoom-in duration-300">
+            <a href="#features" class="block text-xl font-black text-slate-900 uppercase tracking-widest">Features</a>
+            <a href="/login/" class="block text-xl font-black text-slate-900 uppercase tracking-widest">Login</a>
             <hr class="border-slate-100">
-            <a href="/register/" class="block w-full text-center bg-indigo-600 text-white py-4 rounded-2xl font-bold text-lg">
+            <a href="/register/" class="block w-full text-center bg-[#CC0000] text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl shadow-red-100">
                 Start for Free
             </a>
         </div>
     </nav>
 
-    <header class="relative bg-slate-50/50 py-16 md:py-32 px-6 overflow-hidden">
-        <div class="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/graphy.png')]"></div>
+    <header class="relative bg-[#FAFAFA] py-20 md:py-40 px-6 overflow-hidden">
+        <div class="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         
-        <div class="relative max-w-5xl mx-auto text-center">
-            <div class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 shadow-inner">
-                Built Specifically for Modern Churches
+        <div class="relative max-w-6xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 bg-red-50 border border-red-100 text-[#CC0000] px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-10 shadow-sm">
+                Next-Gen Church Infrastructure
             </div>
 
-            <h1 class="text-4xl md:text-7xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">
-                Run Church Conferences <br class="hidden md:block">
-                <span class="text-indigo-600">Without the Chaos.</span>
+            <h1 class="text-5xl md:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-[0.9] uppercase">
+                Events without <br>
+                <span class="red-gradient-text">the chaos.</span>
             </h1>
 
-            <p class="text-base md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
-                Instant QR-based check-ins, automated mobile registrations, bulk communication, and data export—all in one elegant platform.
+            <p class="text-lg md:text-xl text-slate-500 mb-12 max-w-2xl mx-auto leading-relaxed font-medium uppercase tracking-tighter">
+                QR-based check-ins, automated mobile registration, and enterprise data tools—all in one elegant platform.
             </p>
 
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="/register/" class="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-indigo-700 transition shadow-2xl shadow-indigo-200">
-                    Get Started for Free
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <a href="/register/" class="bg-[#CC0000] text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-red-700 transition shadow-2xl shadow-red-200 transform hover:scale-105 active:scale-95">
+                    Launch Your Event
                 </a>
-                <a href="#features" class="bg-white border border-slate-200 text-slate-900 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-slate-50 transition">
-                    Explore Features
+                <a href="#features" class="bg-white border-2 border-slate-200 text-slate-900 px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-slate-50 transition shadow-sm">
+                    View Systems
                 </a>
             </div>
         </div>
     </header>
 
-    <section id="features" class="py-20 md:py-32 px-6">
+    <section id="features" class="py-24 md:py-40 px-6">
         <div class="max-w-7xl mx-auto">
-            <div class="max-w-xl mb-12 md:mb-20 text-center md:text-left">
-                <span class="text-sm font-bold text-indigo-600 uppercase tracking-widest">Why Confy?</span>
-                <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mt-3">Simplify your entire <br class="hidden md:block"> event workflow.</h2>
+            <div class="max-w-2xl mb-20 text-center md:text-left">
+                <span class="text-xs font-black text-[#CC0000] uppercase tracking-[0.3em]">Core Infrastructure</span>
+                <h2 class="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter mt-4 uppercase leading-none">Built for High-Level <br> Performance.</h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                <div class="group bg-white p-8 rounded-3xl border border-slate-100 hover:border-indigo-100 transition shadow-sm hover:shadow-2xl hover:shadow-indigo-50/50 hover:scale-[1.02]">
-                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 group-hover:text-white transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="group p-10 rounded-[2.5rem] border border-slate-100 bg-white hover:border-red-100 transition-all shadow-sm hover:shadow-3xl hover:shadow-red-50/50 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-red-50 text-[#CC0000] rounded-3xl flex items-center justify-center mb-8 group-hover:bg-[#CC0000] group-hover:text-white transition-all duration-500 shadow-inner">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-2.5">QR Registration</h3>
-                    <p class="text-slate-500 leading-relaxed font-medium">Ditch the paper lists. Attendees scan a unique QR code upon arrival to instantly register on their own device.</p>
+                    <h3 class="text-2xl font-black text-slate-900 mb-4 uppercase tracking-tighter">QR Registration</h3>
+                    <p class="text-slate-400 leading-relaxed font-medium text-sm uppercase tracking-tighter">Ditch paper lists. Real-time scanning for instant registration directly on attendee devices.</p>
                 </div>
 
-                <div class="group bg-white p-8 rounded-3xl border border-slate-100 hover:border-indigo-100 transition shadow-sm hover:shadow-2xl hover:shadow-indigo-50/50 hover:scale-[1.02]">
-                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 group-hover:text-white transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                <div class="group p-10 rounded-[2.5rem] border border-slate-100 bg-white hover:border-red-100 transition-all shadow-sm hover:shadow-3xl hover:shadow-red-50/50 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-red-50 text-[#CC0000] rounded-3xl flex items-center justify-center mb-8 group-hover:bg-[#CC0000] group-hover:text-white transition-all duration-500 shadow-inner">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-2.5">Bulk Email</h3>
-                    <p class="text-slate-500 leading-relaxed font-medium">Send updates, thank you notes, or future event details to all registered attendees in one click.</p>
+                    <h3 class="text-2xl font-black text-slate-900 mb-4 uppercase tracking-tighter">Bulk Engine</h3>
+                    <p class="text-slate-400 leading-relaxed font-medium text-sm uppercase tracking-tighter">Enterprise-grade communication tools to send updates or notes to thousands in one click.</p>
                 </div>
 
-                <div class="group bg-white p-8 rounded-3xl border border-slate-100 hover:border-indigo-100 transition shadow-sm hover:shadow-2xl hover:shadow-indigo-50/50 hover:scale-[1.02]">
-                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 group-hover:text-white transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <div class="group p-10 rounded-[2.5rem] border border-slate-100 bg-white hover:border-red-100 transition-all shadow-sm hover:shadow-3xl hover:shadow-red-50/50 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-red-50 text-[#CC0000] rounded-3xl flex items-center justify-center mb-8 group-hover:bg-[#CC0000] group-hover:text-white transition-all duration-500 shadow-inner">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-2.5">Data Export</h3>
-                    <p class="text-slate-500 leading-relaxed font-medium">View real-time registration lists and export your entire conference data to CSV/Excel instantly.</p>
+                    <h3 class="text-2xl font-black text-slate-900 mb-4 uppercase tracking-tighter">Data Intelligence</h3>
+                    <p class="text-slate-400 leading-relaxed font-medium text-sm uppercase tracking-tighter">Monitor attendance trends and export your entire database to Excel for deep analysis.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-20 md:py-24 bg-slate-950 px-6 text-center">
-        <div class="max-w-2xl mx-auto">
-            <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight leading-tight">
-                Ready to transform your next conference?
+    <section class="py-32 bg-slate-900 px-6 text-center relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-[#CC0000] opacity-10 blur-[150px] -mr-48 -mt-48"></div>
+        <div class="max-w-3xl mx-auto relative z-10">
+            <h2 class="text-4xl md:text-7xl font-black text-white mb-10 tracking-tighter leading-none uppercase">
+                Modernize Your <br> Strategy.
             </h2>
-            <p class="text-base md:text-lg text-slate-300 mb-10 font-medium">
-                Create an account today and manage your first conference for free. No credit card required.
+            <p class="text-slate-400 mb-12 font-bold uppercase tracking-widest text-xs">
+                Create an account today. Scale your management for free.
             </p>
-            <a href="/register/" class="inline-block w-full sm:w-auto bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-indigo-700 transition shadow-2xl shadow-indigo-400/20">
-                Create Your First Conference
+            <a href="/register/" class="inline-block bg-[#CC0000] text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-red-700 transition shadow-2xl shadow-red-500/20 transform hover:scale-110">
+                Create First Conference
             </a>
         </div>
     </section>
 
-    <footer class="py-12 px-6 border-t border-slate-100">
-        <div class="max-w-7xl mx-auto text-center text-sm font-medium text-slate-400">
-            &copy; 2026 Confy SaaS. All rights reserved.
+    <footer class="py-16 px-6 border-t border-slate-100 bg-white">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="flex items-center gap-2.5 grayscale">
+                <div class="w-6 h-6 bg-slate-900 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-black text-[10px] italic">C</span>
+                </div>
+                <span class="text-sm font-black tracking-tighter text-slate-900 uppercase">Confy Systems</span>
+            </div>
+            <div class="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">
+                &copy; 2026 Enterprise Protocol. Lagos Office.
+            </div>
         </div>
     </footer>
 
@@ -138,19 +150,11 @@
         btn.addEventListener('click', () => {
             menu.classList.toggle('hidden');
             if (menu.classList.contains('hidden')) {
-                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />';
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7" />';
             } else {
-                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />';
             }
         });
-
-        // Close menu when clicking a link
-        document.querySelectorAll('#mobile-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                menu.classList.add('hidden');
-            });
-        });
     </script>
-
 </body>
 </html>
