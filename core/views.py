@@ -1,23 +1,22 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.db.models import Q
 from django.conf import settings
-from openpyxl import Workbook
-import qrcode
-from io import BytesIO
 
 from .models import Conference, Attendee
 from .forms import ConferenceForm, AttendeeForm
 
-import sib_api_v3_sdk
-from sib_api_v3_sdk.rest import ApiException
+from openpyxl import Workbook
+import qrcode
+from io import BytesIO
 
 
-# ---------------- AUTH ----------------
+# ================= AUTH =================
+
 def user_login(request):
     if request.method == "POST":
         user = authenticate(
@@ -27,6 +26,8 @@ def user_login(request):
         if user:
             login(request, user)
             return redirect('dashboard')
+        else:
+            messages.error(request, "Invalid credentials")
     return render(request, 'login.html')
 
 
@@ -36,19 +37,23 @@ def user_logout(request):
     return redirect('login')
 
 
-# ---------------- HOME ----------------
+# ================= HOME =================
+
 def home(request):
     return render(request, 'home.html')
 
 
-# ---------------- DASHBOARD ----------------
+# ================= DASHBOARD =================
+
 @login_required
 def dashboard(request):
-    conferences = Conference.objects.filter(church=request.user.church)
+    church = request.user.church
+    conferences = Conference.objects.filter(church=church)
     return render(request, 'dashboard.html', {'conferences': conferences})
 
 
-# ---------------- CREATE ----------------
+# ================= CONFERENCE =================
+
 @login_required
 def create_conference(request):
     form = ConferenceForm(request.POST or None)
@@ -60,7 +65,16 @@ def create_conference(request):
     return render(request, 'create_conference.html', {'form': form})
 
 
-# ---------------- PUBLIC REGISTRATION ----------------
+@login_required
+def delete_conference(request, pk):
+    conf = get_object_or_404(Conference, id=pk, church=request.user.church)
+    if request.method == "POST":
+        conf.delete()
+    return redirect('dashboard')
+
+
+# ================= EVENT REGISTRATION =================
+
 def event_page(request, pk):
     conference = get_object_or_404(Conference, pk=pk)
     form = AttendeeForm(request.POST or None)
@@ -69,25 +83,14 @@ def event_page(request, pk):
         attendee = form.save(commit=False)
         attendee.conference = conference
 
-        # Prevent duplicate
-        if Attendee.objects.filter(
-            conference=conference
-        ).filter(
-            Q(email=attendee.email) | Q(phone=attendee.phone)
-        ).exists():
-            return render(request, 'event_page.html', {
-                'form': form,
-                'conference': conference,
-                'error': 'You already registered'
-            })
+        # Prevent duplicate registration
+        if Attendee.objects.filter(conference=conference, email=attendee.email).exists():
+            messages.error(request, "You already registered for this conference.")
+        else:
+            attendee.save()
+            messages.success(request, "Registration successful!")
 
-        attendee.save()
-
-        return render(request, 'event_page.html', {
-            'form': AttendeeForm(),
-            'conference': conference,
-            'success': 'Registration successful 🎉'
-        })
+        return redirect('event_page', pk=pk)
 
     return render(request, 'event_page.html', {
         'form': form,
@@ -95,7 +98,8 @@ def event_page(request, pk):
     })
 
 
-# ---------------- ATTENDEE LIST ----------------
+# ================= ATTENDEES =================
+
 @login_required
 def attendee_list(request, pk):
     conference = get_object_or_404(Conference, id=pk)
@@ -116,24 +120,17 @@ def attendee_list(request, pk):
     })
 
 
-# ---------------- DELETE ----------------
-@login_required
-def delete_conference(request, pk):
-    conf = get_object_or_404(Conference, id=pk, church=request.user.church)
-    if request.method == "POST":
-        conf.delete()
-    return redirect('dashboard')
-
-
 @login_required
 def delete_attendee(request, pk):
     attendee = get_object_or_404(Attendee, id=pk)
     if request.method == "POST":
         attendee.delete()
+        messages.success(request, "Attendee deleted")
     return redirect(request.META.get('HTTP_REFERER'))
 
 
-# ---------------- EXPORT EXCEL ----------------
+# ================= EXPORT =================
+
 @login_required
 def export_attendees(request, pk):
     conference = get_object_or_404(Conference, id=pk)
@@ -157,9 +154,11 @@ def export_attendees(request, pk):
     return response
 
 
-# ---------------- QR ----------------
+# ================= QR =================
+
 def generate_qr(request, pk):
-    url = request.build_absolute_uri(f"/event/{pk}/")
+    base_url = getattr(settings, "SITE_URL", "http://127.0.0.1:8000")
+    url = f"{base_url}/event/{pk}/"
 
     qr = qrcode.make(url)
     buffer = BytesIO()
@@ -168,52 +167,33 @@ def generate_qr(request, pk):
     return HttpResponse(buffer.getvalue(), content_type="image/png")
 
 
-# ---------------- BROADCAST EMAIL (BREVO) ----------------
+# ================= BROADCAST EMAIL =================
+
 @login_required
 def send_conference_broadcast(request, conf_id):
     conference = get_object_or_404(Conference, id=conf_id)
-    attendees = conference.attendee_set.all()
+    attendees = Attendee.objects.filter(conference=conference)
 
     if request.method == "POST":
         subject = request.POST.get('subject')
         message_body = request.POST.get('message')
 
-        email_list = list(attendees.values_list('email', flat=True))
+        emails = [a.email for a in attendees if a.email]
 
-        if not email_list:
-            messages.warning(request, "No attendees found.")
+        if not emails:
+            messages.warning(request, "No attendees to send email.")
             return redirect('attendee_list', pk=conf_id)
 
-        configuration = sib_api_v3_sdk.Configuration()
-        configuration.api_key['api-key'] = settings.EMAIL_HOST_PASSWORD
+        for email in emails:
+            send_mail(
+                subject,
+                message_body,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+                fail_silently=True
+            )
 
-        api_instance = sib_api_v3_sdk.TransactionalEmailsApi(
-            sib_api_v3_sdk.ApiClient(configuration)
-        )
-
-        sender = {"name": "Confy", "email": settings.DEFAULT_FROM_EMAIL}
-        to = [{"email": settings.DEFAULT_FROM_EMAIL}]
-        bcc = [{"email": email} for email in email_list]
-
-        html_content = f"""
-        <h2>{conference.title} Update</h2>
-        <p>{message_body}</p>
-        """
-
-        email = sib_api_v3_sdk.SendSmtpEmail(
-            to=to,
-            bcc=bcc,
-            html_content=html_content,
-            sender=sender,
-            subject=f"{conference.title} - {subject}"
-        )
-
-        try:
-            api_instance.send_transac_email(email)
-            messages.success(request, "Broadcast sent successfully ✅")
-        except ApiException as e:
-            messages.error(request, f"Error: {e}")
-
+        messages.success(request, "Broadcast sent successfully!")
         return redirect('attendee_list', pk=conf_id)
 
     return render(request, 'compose_email.html', {
