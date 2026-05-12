@@ -27,4 +27,9 @@ urlpatterns = [
 
     # Broadcast (ONLY ONE ROUTE)
     path('conference/<int:conf_id>/broadcast/', views.send_conference_broadcast, name='send_broadcast'),
+    path(
+    'conference/<int:conf_id>/sms/',
+    views.send_bulk_sms,
+    name='send_bulk_sms'
+),
 ]
