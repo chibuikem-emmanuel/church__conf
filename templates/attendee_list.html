@@ -4,6 +4,7 @@
 <div class="min-h-screen bg-stone-50 py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto space-y-8">
         
+        <!-- Header & Primary Actions -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-8">
             <div>
                 <nav class="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest mb-3">
@@ -11,11 +12,21 @@
                     <span class="text-slate-300">/</span>
                     <span class="text-[#CC0000]">Attendee Intelligence</span>
                 </nav>
-                <h1 class="text-4xl font-black text-slate-900 uppercase tracking-tight">{{ conference.title }}</h1>
-                <p class="text-slate-500 font-medium mt-1">Real-time registration tracking and database management.</p>
+                <h1 class="text-4xl font-black text-slate-900 uppercase tracking-tight leading-none">{{ conference.title }}</h1>
+                <p class="text-slate-500 font-medium mt-2">Real-time registration tracking and database management.</p>
             </div>
 
             <div class="flex flex-wrap items-center gap-3">
+                <!-- NEW: Send SMS Button -->
+                <a href="{% url 'send_bulk_sms' conference.id %}" 
+                   class="inline-flex items-center px-6 py-3 bg-slate-900 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:bg-[#CC0000] transition shadow-lg shadow-slate-200 group">
+                    <svg class="w-4 h-4 mr-2 text-slate-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                    Send SMS
+                </a>
+
+                <!-- Broadcast Email Button (Kept) -->
                 <a href="{% url 'send_broadcast' conference.id %}" 
                    class="inline-flex items-center px-6 py-3 bg-[#CC0000] text-white font-black rounded-xl text-xs uppercase tracking-widest hover:bg-red-700 transition shadow-lg shadow-red-100">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,6 +35,7 @@
                     Broadcast Email
                 </a>
 
+                <!-- Export Data Button -->
                 <a href="/export/{{ conference.id }}/"
                    class="inline-flex items-center px-6 py-3 bg-white border-2 border-slate-100 text-slate-700 font-black rounded-xl text-xs uppercase tracking-widest hover:bg-slate-50 transition">
                     <svg class="w-4 h-4 mr-2 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,6 +46,7 @@
             </div>
         </div>
 
+        <!-- Success/Error Messaging -->
         {% if messages %}
             <div class="space-y-3">
                 {% for message in messages %}
@@ -47,6 +60,7 @@
             </div>
         {% endif %}
 
+        <!-- Analytics Overview -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40">
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Enrollment</p>
@@ -61,10 +75,11 @@
             </div>
             <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40">
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Capacity Status</p>
-                <p class="text-4xl font-black text-slate-800 mt-1">Active</p>
+                <p class="text-4xl font-black text-slate-800 mt-1 uppercase tracking-tighter italic">Active</p>
             </div>
         </div>
 
+        <!-- Table & Filter Section -->
         <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/60 overflow-hidden">
             <div class="p-8 border-b border-slate-50 bg-slate-50/30">
                 <form method="GET" class="flex flex-col md:flex-row md:items-center gap-4">
@@ -75,14 +90,14 @@
                         <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search by name, email, or phone..." 
                             class="w-full pl-14 pr-6 py-4 bg-white border-2 border-slate-100 rounded-2xl text-sm font-semibold focus:border-[#CC0000] outline-none transition-all shadow-inner">
                     </div>
-                    <button type="submit" class="bg-slate-900 text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-[#CC0000] transition-all">
+                    <button type="submit" class="bg-slate-900 text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-[#CC0000] transition-all transform active:scale-95">
                         Filter Records
                     </button>
                 </form>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left border-collapse text-slate-900">
                     <thead>
                         <tr class="bg-slate-50/50">
                             <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Attendee Profile</th>
@@ -95,12 +110,12 @@
                         <tr class="group hover:bg-red-50/30 transition-colors">
                             <td class="px-8 py-6">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-slate-100 text-slate-400 group-hover:bg-[#CC0000] group-hover:text-white rounded-2xl flex items-center justify-center font-black text-sm transition-all transform group-hover:rotate-3">
+                                    <div class="w-12 h-12 bg-slate-100 text-slate-400 group-hover:bg-[#CC0000] group-hover:text-white rounded-2xl flex items-center justify-center font-black text-sm transition-all transform group-hover:rotate-3 shadow-inner">
                                         {{ a.name|slice:":1"|upper }}
                                     </div>
                                     <div>
-                                        <div class="font-black text-slate-800 group-hover:text-[#CC0000] transition text-base">{{ a.name }}</div>
-                                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">ID: #CONF-0{{ a.id }}</div>
+                                        <div class="font-black text-slate-800 group-hover:text-[#CC0000] transition text-base uppercase tracking-tight">{{ a.name }}</div>
+                                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Protocol: #CONF-0{{ a.id }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -109,13 +124,13 @@
                                     <svg class="w-3.5 h-3.5 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
                                     {{ a.email }}
                                 </div>
-                                <div class="text-xs font-semibold text-slate-400 flex items-center gap-2">
+                                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                     <svg class="w-3.5 h-3.5 text-slate-300" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
                                     {{ a.phone }}
                                 </div>
                             </td>
                             <td class="px-8 py-6 text-right">
-                                <form method="POST" action="/delete-attendee/{{ a.id }}/" onsubmit="return confirm('WARNING: Permanently remove this record?');" class="inline-block">
+                                <form method="POST" action="/delete-attendee/{{ a.id }}/" onsubmit="return confirm('CRITICAL: Permanently purge this record?');" class="inline-block">
                                     {% csrf_token %}
                                     <button type="submit" class="p-3 text-slate-200 hover:text-[#CC0000] hover:bg-red-50 rounded-xl transition-all">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
