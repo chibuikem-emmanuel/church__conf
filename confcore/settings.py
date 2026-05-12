@@ -104,7 +104,8 @@ DATABASES = {
 }
 
 
-
+TERMII_API_KEY = os.getenv("TERMII_API_KEY")
+TERMII_SENDER_ID = os.getenv("TERMII_SENDER_ID", "Confy")
 
 # settings.py
 
