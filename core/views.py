@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.db.models import Q
 from django.conf import settings
+import requests
 
 from .models import Conference, Attendee
 from .forms import ConferenceForm, AttendeeForm
@@ -218,4 +219,53 @@ def send_conference_broadcast(request, conf_id):
     return render(request, 'compose_email.html', {
         'conference': conference,
         'attendees': attendees
+    })
+
+
+
+
+
+
+@login_required
+def send_bulk_sms(request, conf_id):
+    conference = get_object_or_404(Conference, id=conf_id)
+    attendees = Attendee.objects.filter(conference=conference)
+
+    if request.method == "POST":
+        message_text = request.POST.get("message")
+
+        phone_numbers = []
+
+        for attendee in attendees:
+            if attendee.phone:
+                phone_numbers.append(attendee.phone)
+
+        sent = 0
+
+        for phone in phone_numbers:
+            payload = {
+                "to": phone,
+                "from": settings.TERMII_SENDER_ID,
+                "sms": message_text,
+                "type": "plain",
+                "channel": "generic",
+                "api_key": settings.TERMII_API_KEY
+            }
+
+            try:
+                requests.post(
+                    "https://api.ng.termii.com/api/sms/send",
+                    json=payload,
+                    timeout=10
+                )
+                sent += 1
+            except:
+                pass
+
+        messages.success(request, f"SMS sent to {sent} attendees.")
+        return redirect("attendee_list", pk=conference.id)
+
+    return render(request, "send_sms.html", {
+        "conference": conference,
+        "attendees": attendees
     })
