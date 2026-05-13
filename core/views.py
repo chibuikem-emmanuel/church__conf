@@ -177,14 +177,19 @@ def export_attendees(request, pk):
 # ================= QR =================
 
 def generate_qr(request, pk):
-    base_url = getattr(settings, "SITE_URL", "http://127.0.0.1:8000")
+    base_url = request.build_absolute_uri("/")[:-1]
     url = f"{base_url}/event/{pk}/"
 
     qr = qrcode.make(url)
-    buffer = BytesIO()
-    qr.save(buffer, format='PNG')
 
-    return HttpResponse(buffer.getvalue(), content_type="image/png")
+    buffer = BytesIO()
+    qr.save(buffer, format="PNG")
+    buffer.seek(0)
+
+    return HttpResponse(
+        buffer.getvalue(),
+        content_type="image/png"
+    )
 
 
 # ==================================================
