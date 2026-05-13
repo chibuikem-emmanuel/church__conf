@@ -187,38 +187,54 @@ def generate_qr(request, pk):
     return HttpResponse(buffer.getvalue(), content_type="image/png")
 
 
-# ================= BROADCAST EMAIL =================
-
+# ==================================================
+# BROADCAST EMAIL
+# ==================================================
 @login_required
 def send_conference_broadcast(request, conf_id):
     conference = get_object_or_404(Conference, id=conf_id)
     attendees = Attendee.objects.filter(conference=conference)
 
     if request.method == "POST":
-        subject = request.POST.get('subject')
-        message_body = request.POST.get('message')
+        subject = request.POST.get("subject")
+        body = request.POST.get("message")
 
-        emails = [a.email for a in attendees if a.email]
+        emails = list(
+            attendees.exclude(email="")
+            .values_list("email", flat=True)
+            .distinct()
+        )
 
         if not emails:
-            messages.warning(request, "No attendees to send email.")
-            return redirect('attendee_list', pk=conf_id)
+            messages.warning(request, "No attendee emails found.")
+            return redirect("attendee_list", pk=conference.id)
+
+        sent = 0
+        failed = 0
 
         for email in emails:
-            send_mail(
-                subject,
-                message_body,
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
-                fail_silently=True
-            )
+            try:
+                send_mail(
+                    subject,
+                    body,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email],
+                    fail_silently=False
+                )
+                sent += 1
+            except Exception as e:
+                failed += 1
 
-        messages.success(request, "Broadcast sent successfully!")
-        return redirect('attendee_list', pk=conf_id)
+        messages.success(
+            request,
+            f"Broadcast completed. Sent: {sent}, Failed: {failed}"
+        )
 
-    return render(request, 'compose_email.html', {
-        'conference': conference,
-        'attendees': attendees
+        return redirect("attendee_list", pk=conference.id)
+
+    return render(request, "compose_email.html", {
+        "conference": conference,
+        "attendees": attendees
     })
 
 
@@ -234,15 +250,47 @@ def send_bulk_sms(request, conf_id):
     if request.method == "POST":
         message_text = request.POST.get("message")
 
-        phone_numbers = []
+        sent = 0
+        failed = 0
+        used_numbers = set()
 
         for attendee in attendees:
-            if attendee.phone:
-                phone_numbers.append(attendee.phone)
 
-        sent = 0
+            if not attendee.phone:
+                continue
 
-        for phone in phone_numbers:
+            phone = attendee.phone.strip()
+
+            # remove spaces only first
+            phone = phone.replace(" ", "").replace("-", "")
+
+            # Handle +234xxxxxxxxxx
+            if phone.startswith("+234"):
+                phone = phone.replace("+", "")
+
+            # Handle 234xxxxxxxxxx
+            elif phone.startswith("234"):
+                pass
+
+            # Handle 080xxxxxxxx
+            elif phone.startswith("0"):
+                phone = "234" + phone[1:]
+
+            else:
+                failed += 1
+                continue
+
+            # Must be 13 digits total
+            if len(phone) != 13:
+                failed += 1
+                continue
+
+            # Remove duplicates
+            if phone in used_numbers:
+                continue
+
+            used_numbers.add(phone)
+
             payload = {
                 "to": phone,
                 "from": settings.TERMII_SENDER_ID,
@@ -253,16 +301,25 @@ def send_bulk_sms(request, conf_id):
             }
 
             try:
-                requests.post(
+                response = requests.post(
                     "https://api.ng.termii.com/api/sms/send",
                     json=payload,
-                    timeout=10
+                    timeout=15
                 )
-                sent += 1
-            except:
-                pass
 
-        messages.success(request, f"SMS sent to {sent} attendees.")
+                if response.status_code == 200:
+                    sent += 1
+                else:
+                    failed += 1
+
+            except Exception:
+                failed += 1
+
+        messages.success(
+            request,
+            f"SMS sent successfully to {sent} attendees. Failed: {failed}"
+        )
+
         return redirect("attendee_list", pk=conference.id)
 
     return render(request, "send_sms.html", {
